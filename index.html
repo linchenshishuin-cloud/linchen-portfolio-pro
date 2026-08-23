@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>林晨 · AI 协作实践录</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #faf8f5;
+    --bg-section: #ffffff;
+    --bg-accent: #f5f1eb;
+    --bg-card: #faf9f7;
+    --text-primary: #3a3a3a;
+    --text-secondary: #6b6b6b;
+    --text-muted: #a8a5a0;
+    --line: #e8e4df;
+    --accent: #b8a99a;
+    --accent-light: #d4c9bd;
+    --accent-deep: #9b8b7a;
+    --tag-bg: #ede7df;
+    --tag-text: #8b7d6e;
+  }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.9;
+    letter-spacing: 0.02em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--bg-section);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero .growth-line {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 2.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero .growth-tag {
+    font-size: 0.78rem;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    padding: 0.35rem 1rem;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .hero .growth-arrow {
+    color: var(--accent-light);
+    font-size: 0.9rem;
+  }
+
+  .hero h1 {
+    font-size: 2.4rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    letter-spacing: 0.08em;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero .subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    max-width: 500px;
+    line-height: 2.1;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 248, 245, 0.93);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0.85rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nav a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .nav a:hover { color: var(--text-primary); background: var(--bg-accent); }
+
+  /* ── Project Section ── */
+  .project {
+    padding: 7rem 2rem 5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project:last-of-type { border-bottom: none; }
+
+  .project:nth-child(even) { background: var(--bg-section); }
+
+  .project-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .project-number {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    margin-bottom: 0.8rem;
+  }
+
+  .project-title {
+    font-size: 1.55rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.6rem;
+  }
+
+  .project-keyword {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--accent-deep);
+    background: var(--bg-accent);
+    padding: 0.3rem 1rem;
+    border-radius: 16px;
+    letter-spacing: 0.08em;
+    margin-top: 0.5rem;
+  }
+
+  .project-intro {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 540px;
+    margin: 0 auto 3.5rem;
+    line-height: 2;
+  }
+
+  /* ── Step Card ── */
+  .step {
+    margin-bottom: 2.8rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: box-shadow 0.35s ease;
+  }
+
+  .step:hover { box-shadow: 0 1px 18px rgba(0,0,0,0.03); }
+
+  .step-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.3rem 1.8rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-section);
+  }
+
+  .step-num {
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .step-title {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .step-body {
+    padding: 1.6rem 1.8rem;
+  }
+
+  .step-body p {
+    color: var(--text-secondary);
+    font-size: 0.93rem;
+    line-height: 2;
+    margin-bottom: 1rem;
+  }
+
+  .step-body p:last-child { margin-bottom: 0; }
+
+  .step-body .highlight {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .step-body ul, .step-body ol {
+    margin: 0.8rem 0 1rem 1.2rem;
+    color: var(--text-secondary);
+    font-size: 0.93rem;
+    line-height: 2;
+  }
+
+  .step-body li { margin-bottom: 0.4rem; }
+
+  .step-body strong { color: var(--text-primary); }
+
+  .step-body a {
+    color: var(--accent-deep);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-light);
+    transition: border-color 0.3s;
+  }
+
+  .step-body a:hover { border-color: var(--accent-deep); }
+
+  /* ── Table ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    min-width: 500px;
+  }
+
+  thead { background: var(--bg-accent); }
+
+  th {
+    text-align: left;
+    padding: 0.8rem 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.8;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  /* ── Quote ── */
+  .insight-quote {
+    margin: 1.2rem 0;
+    padding: 1.2rem 1.5rem;
+    border-left: 2px solid var(--accent-light);
+    background: var(--bg-accent);
+    border-radius: 0 10px 10px 0;
+    font-size: 0.93rem;
+    color: var(--text-primary);
+    line-height: 2;
+    font-style: normal;
+  }
+
+  .insight-quote .author {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Result Card ── */
+  .result-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0;
+  }
+
+  .result-list li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .result-list li:last-child { border-bottom: none; }
+
+  .result-list li::before {
+    content: "→";
+    color: var(--accent);
+    margin-right: 0.6rem;
+  }
+
+  /* ── Transition ── */
+  .transition {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .transition p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 2;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── About (story.html content) ── */
+  .about-section {
+    padding: 7rem 2rem 6rem;
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--bg-section);
+    border-top: 1px solid var(--line);
+  }
+
+  .about-section .section-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .about-section .section-number {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    margin-bottom: 0.6rem;
+  }
+
+  .about-section .section-title {
+    font-size: 1.55rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  .content-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 2rem 1.8rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .content-card p {
+    color: var(--text-secondary);
+    font-size: 0.93rem;
+    line-height: 2;
+    margin-bottom: 0.8rem;
+  }
+
+  .content-card p:last-child { margin-bottom: 0; }
+  .content-card .highlight { color: var(--text-primary); font-weight: 500; }
+
+  .slice {
+    position: relative;
+    margin: 2.5rem 0;
+    padding-left: 1.6rem;
+    border-left: 1px solid var(--accent-light);
+  }
+
+  .slice-title {
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.8rem;
+    font-weight: 400;
+  }
+
+  .slice p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 2;
+    margin-bottom: 0.6rem;
+  }
+
+  .slice .highlight { color: var(--text-primary); font-weight: 500; }
+
+  .slice-divider {
+    width: 24px;
+    height: 1px;
+    background: var(--line);
+    margin: 2.2rem auto;
+  }
+
+  .slice-anchor {
+    border-left: 1.5px solid var(--accent);
+    margin: 3rem 0;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .slice-anchor .slice-title {
+    font-size: 0.82rem;
+    color: var(--accent-deep);
+  }
+
+  .slice-anchor p {
+    font-size: 0.93rem;
+    color: var(--text-primary);
+    opacity: 0.88;
+  }
+
+  .narrative-card {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+    text-align: center;
+    box-shadow: none;
+  }
+
+  .narrative-card p {
+    color: var(--text-secondary);
+    font-size: 0.93rem;
+    line-height: 2.1;
+    max-width: 540px;
+    margin: 0 auto 1rem;
+  }
+
+  .narrative-card .highlight { color: var(--text-primary); font-weight: 500; }
+
+  .narrative-divider {
+    width: 18px; height: 1px;
+    background: var(--accent-light);
+    margin: 2rem auto;
+  }
+
+  /* ── Tag Cards (from story.html) ── */
+  .tag-cards {
+    display: flex;
+    gap: 1.2rem;
+    margin: 1.5rem 0 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--bg-accent);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .tag-card:hover { background: var(--bg-section); box-shadow: 0 2px 18px rgba(0,0,0,0.04); }
+
+  .tag-card .card-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    transition: opacity 0.3s ease;
+  }
+
+  .tag-card .card-hint {
+    font-size: 0.75rem; color: var(--accent-light);
+    margin-top: 0.6rem; opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .tag-card:hover .card-hint { opacity: 1; }
+
+  .tag-card .card-scene {
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease;
+    margin-top: 0;
+  }
+
+  .tag-card.expanded .card-scene {
+    max-height: 560px; opacity: 1; margin-top: 1.2rem;
+  }
+
+  .tag-card.expanded .card-label { opacity: 0.6; }
+  .tag-card.expanded .card-hint { opacity: 0; }
+
+  .oldman-figure { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+  .oldman-figure img { width: 140px; height: auto; border-radius: 8px; }
+  .oldman-head { cursor: pointer; }
+  .oldman-img-wrap { position: relative; display: inline-block; }
+  .oldman-img-wrap .oldman-head {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 60px; cursor: pointer; z-index: 3;
+  }
+  .idea-bubble {
+    background: var(--bg-section); border: 1px solid var(--line);
+    border-radius: 18px; padding: 0.7rem 1.1rem; font-size: 0.82rem;
+    color: var(--text-secondary); max-width: 220px; line-height: 1.7;
+    text-align: center; transition: opacity 0.35s ease;
+    position: relative; min-height: 3rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .idea-bubble::after {
+    content: ""; position: absolute; bottom: -6px; left: 50%;
+    transform: translateX(-50%); width: 10px; height: 10px;
+    background: var(--bg-section); border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .idea-bubble.fade { opacity: 0; }
+  .tap-hint { font-size: 0.7rem; color: var(--accent-light); margin-top: 0.3rem; }
+
+  .scorpion-text { font-size: 0.85rem; color: var(--text-secondary); line-height: 2; text-align: center; padding: 0.5rem 0; }
+
+  .capybara-scene { position: relative; width: 100%; min-height: 260px; overflow: hidden; }
+  .capybara-center { position: absolute; left: 50%; top: 55%; transform: translate(-50%,-50%); z-index: 2; }
+  @keyframes capy-chew { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
+  .capy-img { animation: capy-chew 1.2s ease-in-out infinite; }
+  .float-label {
+    position: absolute; font-size: 0.7rem; color: var(--text-muted);
+    opacity: 0.35; white-space: nowrap;
+    animation: drift-left linear infinite; pointer-events: none;
+  }
+  @keyframes drift-left {
+    0%   { transform: translateX(0); opacity: 0; }
+    8%   { opacity: 0.4; }
+    85%  { opacity: 0.4; }
+    100% { transform: translateX(-160px); opacity: 0; }
+  }
+  .inner-bubble {
+    position: absolute; z-index: 3; font-size: 0.75rem;
+    color: var(--accent); opacity: 0; pointer-events: none;
+    animation: inner-rise 5s ease-in-out infinite;
+  }
+  @keyframes inner-rise {
+    0%   { opacity: 0; transform: translateY(6px); }
+    15%  { opacity: 0.7; transform: translateY(0); }
+    70%  { opacity: 0.4; transform: translateY(-20px); }
+    100% { opacity: 0; transform: translateY(-35px); }
+  }
+
+  /* ── Capybara decor ── */
+  .capybara-decor {
+    text-align: center;
+    padding: 1.5rem 0 0;
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
+    cursor: default;
+  }
+  .capybara-decor img {
+    width: 56px;
+    height: auto;
+    display: inline-block;
+  }
+  .capybara-decor:hover { opacity: 0.65; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+  }
+
+  .footer a { color: var(--accent-deep); text-decoration: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .project { padding: 4rem 1.2rem 3rem; }
+    .about-section { padding: 4rem 1.2rem 3rem; }
+    .step-head { padding: 1rem 1.2rem; flex-wrap: wrap; }
+    .step-body { padding: 1.2rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .project-title { font-size: 1.3rem; }
+    .table-wrap { margin: 1rem -0.5rem; border-radius: 8px; }
+    table { font-size: 0.8rem; }
+    th, td { padding: 0.6rem 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="growth-line">
+    <span class="growth-tag">学会使用</span>
+    <span class="growth-arrow">→</span>
+    <span class="growth-tag">学会判断</span>
+    <span class="growth-arrow">→</span>
+    <span class="growth-tag">学会工程化</span>
+    <span class="growth-arrow">→</span>
+    <span class="growth-tag">学会系统化</span>
+  </div>
+  <h1>林晨 · AI 协作实践录</h1>
+  <p class="subtitle">四段与 AI 协作的真实记录。不是展示我有多厉害，而是记录我如何在每一次与 AI 的协作中保持并锻炼自己的判断力。</p>
+</section>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav" id="nav">
+  <a href="#proj1">项目一</a>
+  <a href="#proj2">项目二</a>
+  <a href="#proj3">项目三</a>
+  <a href="#proj4">项目四</a>
+</nav>
+
+<!-- ═══════════════ PROJECT 1 ═══════════════ -->
+<section class="project" id="proj1">
+  <div class="project-header">
+    <span class="project-number">项目一</span>
+    <h2 class="project-title">AI 时代个人说明书</h2>
+    <span class="project-keyword">入门</span>
+  </div>
+
+  <div class="project-intro">
+    <p>"云邮同契"线上实习的第一份入职任务。我第一次接触 AI Agent，学会了一件事——<strong>我是老板，AI 是项目经理。</strong></p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 1</span>
+      <span class="step-title">任务是什么</span>
+    </div>
+    <div class="step-body">
+      <p>这是"云邮同契"线上实习项目的第一份入职任务——基于飞书模板完成一份 7 模块的《AI 时代个人说明书》，让未来的协作者了解"如何与我高效协作"。</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 2</span>
+      <span class="step-title">我负责什么</span>
+    </div>
+    <div class="step-body">
+      <ul>
+        <li><strong>全部内容的决策者：</strong>所有回答、判断、取舍由我完成</li>
+        <li><strong>表达风格的把关人：</strong>定调"有逻辑但不冷，适当口语但不情绪化"，3 轮迭代中逐句校准</li>
+        <li><strong>内容深度的判断者：</strong>决定哪些地方需要具体案例支撑，哪些地方可以概括</li>
+        <li><strong>两个版本的最终出品人：</strong>飞书完整版 + 简洁版</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 3</span>
+      <span class="step-title">AI 如何参与</span>
+    </div>
+    <div class="step-body">
+
+      <p><strong>用了什么</strong></p>
+      <p>工具只有 WorkBuddy + Hermes，辅助飞书 API 生成在线文档。这是我第一次接触 AI Agent，对怎么把它玩得溜完全没概念，用的东西非常有限。</p>
+
+      <p><strong>AI 帮我解决了什么</strong></p>
+      <p>两件事。</p>
+      <p><strong>第一，资料整理。</strong>把我的零散回答收入框架，形成结构化文档。对一个新手的我来说，这已经足够惊艳。</p>
+      <p><strong>第二，自我发现——这才是最重要的。</strong>通过逐层追问，它挖掘出了我自己都没意识到的部分：我的沟通模式是什么样的、什么情况下压力会累积、什么信号意味着我需要支持。第一次体验到，原来和 AI 进行问答式采访，真的能帮你看见自己没看见的东西。</p>
+
+      <p><strong>踩过的坑</strong></p>
+      <p>最大的坑来自于我的"好习惯"。</p>
+      <p>我之前用 DeepSeek 等大语言模型养成了一个习惯：每次打字都格外斟酌，力求表达精准。这个习惯带到 AI Agent 这里，问题就来了——<strong>你越精准，它越懒。</strong>我写得足够清楚，它就直接把我的话塞进模板，不做优化、不发表意见、不生发任何新东西。</p>
+      <p>第一版本质上就是我的原话精准填入每个框，没有深度加工。我当时觉得"这样也不错"，因为不知道它的水准线在哪。直到读了别人那种特别详细、设计感很强的说明书之后，我才意识到：原来可以有更丰富的方式和 AI 交互，最大限度地利用它的能力。</p>
+
+      <p><strong>AI 做得不够好的地方</strong></p>
+      <p>有时候我还在探讨阶段，它就直接生成文档了——"它似乎需要提前问我一下"。后来反思，这可能是我没用"计划模式"的问题，不完全是它的锅。</p>
+
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 4</span>
+      <span class="step-title">我的判断是什么</span>
+    </div>
+    <div class="step-body">
+
+      <p>这部分是整个过程中最关键的东西——所有在 AI 产出之上的判断，都来自我：</p>
+      <ul>
+        <li><strong>措辞拒绝：</strong>"越拖越烂""在空中楼阁里建海市蜃楼"——这类情绪化或过度文艺的表达统统砍掉，换为逻辑链驱动的说理。因为这不是我要的风格。</li>
+        <li><strong>核心思想纠正：</strong>AI 写的是"看到成长轨迹"，我改成"发现短板在哪里"。这个改动很小，但反映了我对自己真正需求的觉察。</li>
+        <li><strong>颗粒度控制：</strong>简洁版主动砍掉展开性叙述，但保留代表性事件和金句——简洁不等于空洞。</li>
+        <li><strong>发现自己的盲区：</strong>第一版出来，我发现概括句多、具体案例少。这不是 AI 的问题，是我没有在每个回答结束后追问自己一句："这个回答够丰富吗？"</li>
+        <li><strong>更深层的反思：</strong>我把自己对"个人说明书"的理解狭隘地限定在了职场场景，把丰富的生活经历完全隔离在外——"说明书"不该等于"工作说明书"。</li>
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 5</span>
+      <span class="step-title">最终成果</span>
+    </div>
+    <div class="step-body">
+      <ul class="result-list">
+        <li><strong>飞书完整版（定稿）：</strong><a href="https://zcnzut5ahyz5.feishu.cn/docx/GkGMdgjJuoiV6fxu6WZcb6yLn4c" target="_blank">《AI 时代个人说明书》</a> — 7 个模块，3 轮迭代后的最终版本</li>
+        <li><strong>简洁版：</strong>保留核心思想与关键词的提炼版本</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 6</span>
+      <span class="step-title">如果再做一次</span>
+    </div>
+    <div class="step-body">
+
+      <p><strong>一、不要被 AI 的框架带着走</strong></p>
+      <p>第一轮我太相信 AI 的提问，回答完就觉得"这部分够了"。但缺少了一个关键动作——在每个回答之后，自己再追问一句：<strong>这个回答够丰富吗？有没有案例支撑？</strong>下次我会在 AI 的每一次提问之后，主动加一个自我判断环节。</p>
+
+      <p><strong>二、打破"说明书 = 职场说明书"的偏见</strong></p>
+      <p>第一版过度理性，生活经历完全被我隔离在外。其实个人说明书不应该是工作简历的变体，它应该容纳更完整的我。下次我会把具体的生活体验和故事纳进来，用它们去支撑那些关于性格、沟通、压力的描述。</p>
+
+      <p><strong>三、重新定义我和 AI 的关系</strong></p>
+      <p>核心原则只有一句话：<strong>我是老板，AI 是项目经理。</strong></p>
+      <p>所有判断都由我生发，不由它替我判断。下次协作，探讨阶段一律用计划模式，方案确认之后再落到执行层。主动权百分之百掌握在自己手里——"只有把你自己的判断一股脑地、毫无保留地讲给 AI，输出才能真正代表你自己。"</p>
+      <p>和 AI 协作，本质上锻炼的是俯瞰全局、明确方向、拆分路径的能力。这些不是 AI 能替我做的工作——它们是我的工作。</p>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════ TRANSITION ═══════════════ -->
+<div class="transition">
+  <p>第一次协作，我学会了"不要让 AI 的框架带着你走"。<br>第二次，我开始主动修正 AI 的产出——判断力，是从这里开始锻炼的。</p>
+</div>
+
+<!-- ═══════════════ PROJECT 2 ═══════════════ -->
+<section class="project" id="proj2">
+  <div class="project-header">
+    <span class="project-number">项目二</span>
+    <h2 class="project-title">校园团队招募对象洞察报告</h2>
+    <span class="project-keyword">判断力</span>
+  </div>
+
+  <div class="project-intro">
+    <p>第二周个人任务。AI 给了我 17 条洞察和一个完整框架，我修正了其中偏离目标的 6 处。这一次，我不再是"接受者"——我是"校准者"。</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第 1 步</span>
+      <span class="step-title">任务是什么</span>
+    </div>
+    <div class="step-body">
+      <p><strong>一句话</strong>：第二周个人任务——撰写《校园团队招募对象洞察报告》，DDL 7 月 24 日晚。</p>
+      <p><strong>背景</strong>：北辰青年 AI 线上实习第二周，主题为"大学生群体洞察与招新共创"。核心逻辑是：看见现象 → 寻找证据 → 理解需求 → 形成洞察 → 转化表达。要求选择一类具体的大学生，通过真实信息形成有证据、有判断的洞察，为校园团队招新提供依据。</p>
+      <p><strong>报告结构</strong>：按任务文档要求，涵盖 7 个板块——观察对象、信息收集方式、发现事实、核心洞察、招新启发、AI 协作说明、核心结论页。</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第 2 步</span>
+      <span class="step-title">我负责什么</span>
+    </div>
+    <div class="step-body">
+      <p><strong>一句话</strong>：我主导了从"选谁"到"怎么写"的全部核心决策和执行。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>环节</th><th>我的角色与投入</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>确定研究对象</strong></td>
+              <td>决定不以"所有大学生"为对象，而是以我自己和像我一样"被主流叙事忽略、渴望被看见但不知道怎么被看见"的大学生为目标群体</td>
+            </tr>
+            <tr>
+              <td><strong>个人深度访谈</strong></td>
+              <td>以自己为对象，与 AI 进行约 90 分钟对话，回顾大学英语辩论社和心理部门的真实经历——超市付钱紧张、练自行车、苏东坡广场招新、表演赛内定名次等</td>
+            </tr>
+            <tr>
+              <td><strong>朋友问卷调查</strong></td>
+              <td>确认他属于目标人群后，让 AI 生成问卷并整理为飞书多维表格表单，请他填写了 17 题回答。过程中因不熟悉飞书多维表格操作，遇到了一些配置问题，通过摸索解决</td>
+            </tr>
+            <tr>
+              <td><strong>小红书公开表达搜集</strong></td>
+              <td>亲自花约 5 小时在小红书按 5 个关键词方向，搜集并整理了约 80 条真实帖子和评论</td>
+            </tr>
+            <tr>
+              <td><strong>洞察判断与修正</strong></td>
+              <td>在 AI 提出的 17 条初始洞察基础上，主导了 6 处关键修正（见第 4 步）</td>
+            </tr>
+            <tr>
+              <td><strong>招新策略确认</strong></td>
+              <td>提出了"不看标签、不表演、真诚愿意来"的核心策略</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第 3 步</span>
+      <span class="step-title">AI 如何参与</span>
+    </div>
+    <div class="step-body">
+      <p><strong>一句话</strong>：AI 承担了访谈者、信息整理者、模式发现者、表达优化者四个角色，所有关键判断由我决定。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>AI 角色</th><th>具体做了什么</th><th>使用了什么方法/工具</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>访谈者</strong></td>
+              <td>提出 10+ 轮问题挖掘我的大学经历，追问"被看见的瞬间"和"不被看见的瞬间"，帮我从模糊感受中提取具体事实</td>
+              <td>WorkBuddy 对话</td>
+            </tr>
+            <tr>
+              <td><strong>信息整理者</strong></td>
+              <td>将小红书约 80 条素材按 5 个板块归类，提取关键原话和模式；读取朋友飞书问卷回答，与我的访谈做对比分析</td>
+              <td>WorkBuddy + 飞书多维表格</td>
+            </tr>
+            <tr>
+              <td><strong>模式发现者</strong></td>
+              <td>提出 17 条初始洞察，发现"恶性循环链路"——"想做好事→成功进入→被隐形规则稀释→产生内耗→用错误方式表达期待→被否定→退出"；指出朋友问卷与我的访谈之间的共性和差异</td>
+              <td>WorkBuddy 对话</td>
+            </tr>
+            <tr>
+              <td><strong>表达优化者</strong></td>
+              <td>将洞察浓缩为精炼语句；发现招新策略的三个缺口（"你来了会做什么""你会遇到同类""不会让你变透明"）；撰写报告全文并创建飞书文档</td>
+              <td>WorkBuddy + 飞书文档</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>AI 帮我解决了什么：</strong></p>
+      <ul>
+        <li>作为访谈者，帮我从"我有一段模糊的难受经历"变成"我经历了具体的 A、B、C 情境，因此我的需求是 X、Y、Z"</li>
+        <li>从 80 条散落的帖子中提取出可复现的模式，省去了人工归纳的大量时间</li>
+        <li>发现我自己遗漏的策略盲区——我想到的招新策略不够全面，AI 帮我补上了三个缺口</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第 4 步</span>
+      <span class="step-title">我的判断是什么</span>
+    </div>
+    <div class="step-body">
+
+      <p><strong>一句话</strong>：AI 给了我 17 条洞察和一个完整框架，我修正了其中偏离目标的 6 处，确保每一句洞察都服务于"欢迎这样的人"这个核心目标。</p>
+
+      <p><strong>修正 1：恶性循环的起点不是"被门槛挡住"</strong></p>
+      <p>AI 原版认为这类人是"被面试/社交门槛挡住了"。我看到小红书素材后立刻意识到不对——他们不是进不去，而是"<strong>进去了，但无法在不背叛自己的前提下留下来</strong>"。</p>
+      <p>我是怎么判断的：大量帖子提到"进去之后期待落空、内耗严重、被打击"，这和"进不去"是两个完全不同的问题。如果进不去是核心障碍，降低门槛就行；但真正的问题在进去之后，策略必须是"欢迎你保持自己的样子"。我立刻纠正了 AI。</p>
+
+      <p><strong>修正 2：负罪感不是个人问题，是制度强加的</strong></p>
+      <p>AI 起初把"离开时带着负罪感"归因为个人敏感。我在小红书素材里看到有人提到退部要写 5000 字检讨、要经过三轮谈话——这不是个人敏感，是<strong>整个制度在用惩罚对待离开的人</strong>。如果不改这个表述，会把责任错误地归到个人身上，与我"最大限度欢迎"的目标背道而驰。</p>
+
+      <p><strong>修正 3：普适洞察和个人洞察必须分开</strong></p>
+      <p>AI 曾根据我个人的经历修改了跨板块洞察的表述。我坚持两套逻辑分开——我的个人经历是印证，不能替代群体的真相。不能用一个人的故事去修正一群人的声音。</p>
+
+      <p><strong>修正 4：删掉"内在判断力"</strong></p>
+      <p>AI 把"内在判断力"列为这类人加入前就具备的特点。我删掉了，因为<strong>这是目标，不是起点</strong>——他们来就是因为还没有建立这种能力，需要平台帮他们建立，不是他们带着来的。</p>
+
+      <p><strong>修正 5："认真"不够，"真诚"才对</strong></p>
+      <p>AI 总结筛选标准时用了"认真"。我犹豫了一下——这两个词太近了。但我最终坚持了自己的判断：<strong>"认真"是一种不稳定状态，任何人都可以认真；"真诚"是稳定特质，也是这类人最敢确认自己有的东西。</strong>当我不确定是 AI 说的对还是自己应该坚持时，我选择了更勇敢地表达自己的想法。</p>
+
+      <p><strong>修正 6：筛选必须有，但不能是传统面试</strong></p>
+      <p>AI 一度倾向"只要你想来就够了"。我坚持<strong>"筛选必须存在"</strong>——没门槛会让这件事显得不重要。但这个门槛不能是"考你配不配"，应该是"帮你发现自己是谁"的标准。</p>
+
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第 5 步</span>
+      <span class="step-title">最终成果</span>
+    </div>
+    <div class="step-body">
+      <ul class="result-list">
+        <li><strong>飞书文档（完整报告）：</strong><a href="https://zcnzut5ahyz5.feishu.cn/docx/IC1iddk5voKw3wxchaMcC3rqnEb" target="_blank">《校园团队招募对象洞察报告》</a>（互联网可查看）</li>
+        <li><strong>招新策略文档：</strong><a href="校园团队招新策略文档.md" target="_blank">《校园团队招新策略》</a> — 7 大模块：核心洞察、招新策略、渠道选择、价值表达、顾虑解决、话术避雷、筛选方式与团队内部承诺</li>
+      </ul>
+
+      <div class="insight-quote">
+        <strong>报告核心摘要</strong><br><br>
+        观察对象：被主流叙事忽略、渴望被看见但不知道怎么被看见的大学生<br><br>
+        核心洞察：他们不是"不想参与"，而是在反复被隐形规则稀释后，开始怀疑自己的渴望<br><br>
+        招新核心策略：不看标签、不表演、"真诚，愿意来"——帮他们发现自己是谁，而不是考他们配不配
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第 6 步</span>
+      <span class="step-title">如果再做一次</span>
+    </div>
+    <div class="step-body">
+
+      <p><strong>一句话</strong>：信息收集和洞察提炼的节奏是合理的，如果重来，我会把更多时间花在"整体策略的完整度"上——至少产出一个完整的策划方案 idea。</p>
+
+      <p><strong>回顾已有部分</strong>：小红书上 5 小时的素材搜索以及洞察提炼，时间花在了该花的地方，整体协作链路顺畅，没有明显的低效环节。</p>
+
+      <p><strong>如果重来，我会做的不同的事</strong>：</p>
+      <p>给出一套完整的招新策划方案，而不只是纸上的策略。</p>
+      <p>具体来说，至少应该包含这样的 idea 框架：线下招募怎么吸引到正确的人（不是用"你有能力吗"的暗示，而是用"你也是这样想的吗"的共鸣）；线上传播用什么样的文案和图像让目标人群产生"这是写我的"的认同感；面试环节从"考核"变成"帮助发现自己"的对话流程；新人加入后的第一个月怎么设计体验——让他们看见"你来了之后会做什么""你在这里会碰到同类""这里不会让你变透明"。每一个环节都对应策略文档中已经提出的方向，但缺了从策略到执行之间的那一步——把想法变成别人可以直接拿去用的东西。</p>
+      <p><strong>遗憾</strong>：这部分需要设计能力和内容撰写能力（招新海报、推文、文案），当时因为不太擅长就没有继续做。但回头看，哪怕只是文字草稿级别的落地素材，也会让整个方案从"洞察很深"变成"真的能用"。如果重来，我会要求自己至少给出一个完整的流程 idea，再由这个 idea 去发散具体物料。</p>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════ TRANSITION ═══════════════ -->
+<div class="transition">
+  <p>从被动修正到主动校准，判断力在实战中长出来了。<br>但下一个问题更大：怎么把这套能力从"一次性"变成"可复用"？</p>
+</div>
+
+<!-- ═══════════════ PROJECT 3 ═══════════════ -->
+<section class="project" id="proj3">
+  <div class="project-header">
+    <span class="project-number">项目三</span>
+    <h2 class="project-title">求职面试 AI Skill</h2>
+    <span class="project-keyword">方法论</span>
+  </div>
+
+  <div class="project-intro">
+    <p>为大疆 2027 年校招 5 个岗位建立的"求职岗位匹配"Skill。4 轮迭代，从手工协作到工程化沉淀——不仅做了一个工具，还提炼出了一套方法论。</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第一步</span>
+      <span class="step-title">任务是什么</span>
+    </div>
+    <div class="step-body">
+      <p><strong>背景</strong>：林晨为大疆 2027 年校招准备了 5 个意向岗位（销售培训生-海外业务、市场培训生-创意内容、市场培训生-品牌传播、市场培训生-数字化营销、市场培训生-内容运营），需要系统化的求职准备工具。</p>
+      <p><strong>目标</strong>：建立一个可复用的"求职岗位匹配"AI Skill——每次丢入一份新的招聘公告（JD），自动完成岗位拆解 → 经历匹配 → 优势缺口判断 → 投递价值评估 → 简历修改 → 面试题库 → Word 整合，共七步。最终将整个过程沉淀为用户级 Skill，所有工作空间通用。</p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第二步</span>
+      <span class="step-title">我负责什么</span>
+    </div>
+    <div class="step-body">
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>角色</th><th>具体投入</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>林晨 · 共同设计者</strong></td>
+              <td>提供全部源材料（简历 PDF、个人网站、个人说明书、5 份岗位 JD）；在每一轮迭代中基于实际体验给出反馈；作为面试官参与模拟面试后，将亲身观察提炼为 5 个要点，驱动了 skill 最关键的一次升级。自述："我没有太多面试经验，所以我只能担任一个共同设计者——把我想到的、觉得在面试中很重要的点融进去。"</td>
+            </tr>
+            <tr>
+              <td><strong>AI · 执行与工程化</strong></td>
+              <td>读取源材料 → 设计分析框架 → 并行启动 sub-agent 执行拆解 → 输出结构化文档 → 根据反馈迭代优化 → 沉淀为可复用的用户级 Skill（SKILL.md + 用户画像）→ 生成飞书文档</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第三步</span>
+      <span class="step-title">AI 如何参与</span>
+    </div>
+    <div class="step-body">
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>阶段</th><th>方法 / 工具 / 工作流</th><th>AI 解决了什么</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>文件读取</strong></td>
+              <td>python-docx 读 docx；pymupdf 导出 PDF 为 PNG 后多模态读取；Read 工具直接读 MD 和 HTML</td>
+              <td>绕过 PDF 是纯图片型、编辑器 SDK 失效的问题，确保所有源材料可读</td>
+            </tr>
+            <tr>
+              <td><strong>并行拆解</strong></td>
+              <td>Agent tool 并行启动 3-5 个 general-purpose agent（reasoning 模型），每人独立完成一个岗位的全流程分析，每个 agent 注入完整用户画像</td>
+              <td>多个岗位同时处理，节省时间；用户画像注入确保各 agent 分析口径一致</td>
+            </tr>
+            <tr>
+              <td><strong>简历修改</strong></td>
+              <td>python-docx 直接生成适配版简历 DOCX，红色加粗标注修改位置，末尾附"修改对照表"列出每处变动</td>
+              <td>从"给建议"升级为"直接改 + 可视化标注"，用户打开就能看到哪里变了</td>
+            </tr>
+            <tr>
+              <td><strong>飞书文档</strong></td>
+              <td>lark-cli + lark-doc skill，使用 docs +create 和 docs +update --command append 创建和编辑</td>
+              <td>将 Markdown 长文自动转为飞书格式，支持 append 模式追加章节</td>
+            </tr>
+            <tr>
+              <td><strong>沉淀为 Skill</strong></td>
+              <td>skill-creator 初始化模板 + 手动编写 SKILL.md（七步流程 + 核心约束）+ references/用户画像.md；用 package_skill.py 打包验证</td>
+              <td>将整个手工工作流封装为自动触发的 Skill，以后丢 JD 即可执行全流程</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第四步</span>
+      <span class="step-title">我的判断是什么</span>
+    </div>
+    <div class="step-body">
+
+      <p><strong>验证方式</strong>：林晨凭直觉判断 AI 产出的质量——"我觉得他还不错，或者觉得他这里有缺陷，我再根据自己的一些体验和感悟对它进行修改。"这种直觉判断并非纯主观偏好，而是基于对自身真实经历和目标岗位的深度理解。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>轮次</th><th>触发 / 反馈</th><th>决策</th><th>为什么这样改</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>v1→v2</td>
+              <td>"文档太冗长，不利于快速决策"</td>
+              <td>全面精简（36-46KB → 3-5KB，压缩约 90%）；新增「投前决策参考」步骤</td>
+              <td>准备材料是拿来用的，不是拿来读的</td>
+            </tr>
+            <tr>
+              <td>v2→v3</td>
+              <td>"简历不仅要建议，要直接帮我改"</td>
+              <td>第五步从纯文字建议升级为「建议 + 直接改简历 + 红色标注修改位置 + 末尾修改对照表」</td>
+              <td>知道"改什么"和拿到"改好的版本"是两件完全不同的事</td>
+            </tr>
+            <tr>
+              <td>v3→v4</td>
+              <td><strong>面试官实践驱动</strong>：模拟面试中观察到 5 个要点——表达感染力不足面试官会走神、反复用同一段经历引发信任疑虑、不熟问题需要缓冲话术、感受不到渴求是致命伤、情境题考察灵活应对</td>
+              <td>第六步从 10 题平铺 → 5 类 15-18 题结构；每题新增「备选场景」「表达注意」字段；文末新增「面试表达与应对指南」五节</td>
+              <td>站在面试官那端才发现：面试中"说得好"和"做得好"是两件事，而求职者几乎把所有准备精力放在后者</td>
+            </tr>
+            <tr>
+              <td>v4</td>
+              <td>"10 题对面试官够用，对面试者准备不够"</td>
+              <td>面试题按五类分类（动机与自我认知 / 经历与行为验证 / 岗位情境模拟 / 压力与应变 / 创意与开放），每类 3-4 题</td>
+              <td>题目类型多样化比题目数量更重要；面试者需要看到更多变体才能灵活调用素材</td>
+            </tr>
+            <tr>
+              <td>—</td>
+              <td>深入探讨"优秀 vs 合适"、"动机权重在不同岗位的差异"、"产出可量化程度"</td>
+              <td>将三个观察串联为一个底层逻辑——「岗位类型决定面试判断依赖什么证据」</td>
+              <td>不仅为 skill 增加功能，也为团队路演汇报增加了有思考深度的视角</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第五步</span>
+      <span class="step-title">最终成果</span>
+    </div>
+    <div class="step-body">
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>类别</th><th>成果</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>核心 Skill</strong></td>
+              <td><a href="job-fit-matching.zip" download>job-fit-matching.zip</a>（含 SKILL.md 七步流程 + references/用户画像.md），用户级 Skill，所有工作空间通用</td>
+            </tr>
+            <tr>
+              <td><strong>5 岗位完整分析</strong></td>
+              <td>
+                每岗位含 6 份文件（1 docx + 5 md）：岗位拆解、经历适配分析、投前决策参考、简历修改建议、面试题库、完整准备手册，覆盖大疆 2027 校招全部意向岗位。<br><br>
+                <a href="projects/01-销售培训生-海外业务/">01 销售培训生 · 海外业务</a><br>
+                <a href="projects/02-市场培训生-创意内容/">02 市场培训生 · 创意内容</a><br>
+                <a href="projects/03-市场培训生-品牌传播/">03 市场培训生 · 品牌传播</a><br>
+                <a href="projects/04-市场培训生-数字化营销/">04 市场培训生 · 数字化营销</a><br>
+                <a href="projects/05-市场培训生-内容运营/">05 市场培训生 · 内容运营</a>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>飞书路演文档</strong></td>
+              <td><a href="https://zcnzut5ahyz5.feishu.cn/docx/Z38idt7O1obE4mxHaI8cSsd4nXb?from=from_copylink" target="_blank">《个人面试复盘的感悟》</a> — Part 1（优秀 vs 合适 + 框架外延伸）+ Part 2（三个问题 + 面试官视角启示）+ 补（三个观察的底层逻辑：岗位类型决定判断证据类型）</td>
+            </tr>
+            <tr>
+              <td><strong>版本迭代记录</strong></td>
+              <td>v1（六步基础流程）→ v2（精简 + 投前决策）→ v3（直接改简历 + Word 整合 + 沉淀为 Skill）→ v4（面试官实践驱动的第六步深度增强 + 题库扩容）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">第六步</span>
+      <span class="step-title">如果再做一次</span>
+    </div>
+    <div class="step-body">
+
+      <div class="insight-quote">
+        "我既缺乏面试官的经验，也缺乏面试者的经验。当我对这件事并没有那么了解、缺乏经验去把它做得更好时，或许我需要首先尽可能用各种方法去体验它——去切换角色视角，完全带入地做一些事情。"
+        <br><br>
+        <strong>如果再做一次</strong>，我会在和 AI 搭建 skill 之前，先从我的理想岗位出发，进行多轮模拟面试。我可以是面试者，也可以是面试官，通过这样的角色扮演，去真正体验面试中什么是重要的、什么会影响判断，再把这些体悟针对性地沉淀到 skill 里。而不是反过来——先搭好 skill，再用实践去修补它。
+        <br><br>
+        <strong>提炼出的方法论</strong>：做 skill 之前，先体验足够多次要做的那件事。当经验不足时，不要靠想象来设计工作流——用 AI 做角色扮演、切换视角，把体验跑足之后，再动手沉淀。一个好的 skill，应该建立在对工作流程本身的深度熟悉之上，而不是在一个空框架上反复打补丁。
+        <span class="author">—— 林晨</span>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════ TRANSITION ═══════════════ -->
+<div class="transition">
+  <p>从"让 AI 帮我做"到"把能力沉淀下来让别人也能用"。<br>但下一个问题更实在——怎么把日常工作中那些隐形的、重复的、靠经验记的东西，也变成一个系统？</p>
+</div>
+
+<!-- ═══════════════ PROJECT 4 ═══════════════ -->
+<section class="project" id="proj4">
+  <div class="project-header">
+    <span class="project-number">项目四</span>
+    <h2 class="project-title">公众号贴图 Skill</h2>
+    <span class="project-keyword">系统化</span>
+  </div>
+
+  <div class="project-intro">
+    <p>暑期微信公众号运营实习中，把"贴图创作"这个高频重复工作沉淀为一个 AI Skill。10 天，11 篇产出，14 项自查清单——从"靠经验记忆"到"系统化流水线"。</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 1</span>
+      <span class="step-title">任务是什么</span>
+    </div>
+    <div class="step-body">
+      <p>暑期在做<strong>微信公众号运营增长实习生</strong>，岗位的核心重复工作是"贴图创作"：从飞书知识库的「小绿书素材库」里找爆款帖子，改写成新的公众号长文，配合标题、封面文案、钩子结尾，然后发布。</p>
+      <p>这件事有几个让人头疼的特点：</p>
+      <ul>
+        <li><strong>高频重复</strong>：每天都要改写，每篇都走相似流程，但每次都要重新想一遍规则</li>
+        <li><strong>规则细碎</strong>：每篇都要卡字数（WPS 一页）、人设要统一（武汉三年级女儿妈妈）、要铺 7 层种草但不能带产品信号词、效果要带数字不能空口说白话……规则越积越多，全凭脑子记</li>
+        <li><strong>质量波动</strong>：靠记忆遵守这些规则，容易遗漏、容易复刻模板、容易产出参差不齐</li>
+      </ul>
+      <p>所以核心目标很明确：<strong>把所有规则沉淀成一个 Skill，让 AI 每次改写时自动加载执行，把"依赖经验记忆"变成"系统化流水线"。</strong></p>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 2</span>
+      <span class="step-title">我负责什么</span>
+    </div>
+    <div class="step-body">
+      <p>整个过程从 7 月 29 日到 8 月 7 日，跨 10 天，大致经历了三个阶段：</p>
+
+      <p><strong>搭骨架：建立标准化流程（7.29）</strong></p>
+      <p>从飞书知识库读取了 100+ 条爆帖数据，横向对比阅读量，选了最高的一篇作为蓝本，完成首次改写。同时把整件事抽象为 <strong>8 步标准化流程</strong>：选帖 → 判类型 → 角色设定 → 开头三要素 → 正文 → 种草 7 层 → 钩子 → 10 标题+10 封面。沉淀为项目级 Skill 文件（204 行），包含 11 条自查清单。</p>
+
+      <p><strong>用实战打磨规则（7.31～8.4）</strong></p>
+      <p>每改写一篇，就暴露一个问题，我就修一条规则。这个阶段特别关键：</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>时间</th><th>实战暴露的问题</th><th>我加的规则</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>7.31</td>
+              <td>字数不够、内容被框架框死</td>
+              <td>字数收紧，增加创意多样性警示</td>
+            </tr>
+            <tr>
+              <td>7.31</td>
+              <td>每篇城市/孩子性别变来变去，读者感觉分裂</td>
+              <td><strong>人设固定</strong>：武汉 + 三年级女儿 + 用"她"</td>
+            </tr>
+            <tr>
+              <td>8.1</td>
+              <td>轻收句反复复刻"种植+一辈子"模板</td>
+              <td>新增<strong>反抄袭铁律</strong> + 自查第 14 项</td>
+            </tr>
+            <tr>
+              <td>8.3</td>
+              <td>种草写"效果很好"太虚，没有说服力</td>
+              <td>新增<strong>种草效果必须带数字</strong>铁律 + 禁止词清单</td>
+            </tr>
+            <tr>
+              <td>8.4</td>
+              <td>正文列了 8 个方法，读者肯定划走</td>
+              <td>新增<strong>正文分点不超过 5 个</strong>铁律</td>
+            </tr>
+            <tr>
+              <td>8.4</td>
+              <td>一篇纪录片文章改了 4 版才找对方向</td>
+              <td>新增资源型文章特殊规则（资源数量不受分点限制、种草放资源后面）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>收网定型（8.5～8.7）</strong></p>
+      <p>8 月 5 日一次性做了 4 项规则修订：字数压紧到 750-800、种草效果必须分点列出（2-3 个+数字+一句话总结）、资源型文章分点豁免规则、"深度阅读训练"全篇最多出现 1 次。自查清单从 12 项扩到 <strong>14 项</strong>。</p>
+      <p>到这个版本，Skill 已经相当成熟了——后面 8.5 和 8.7 的三篇改写全部一次通过所有检查，不再来回返工。</p>
+
+      <p><strong>实际产量</strong>：10 天内完成了 <strong>11 篇</strong>完整的公众号贴图改写交付，覆盖教育观点、资源分享、学习规划三种文章类型，每篇都包含正文 + 10 标题 + 10 封面文案 + 10 钩子结尾 + 14 项自查。</p>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 3</span>
+      <span class="step-title">AI 如何参与</span>
+    </div>
+    <div class="step-body">
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>AI 角色</th><th>具体做了什么</th><th>使用工具</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>素材读取与筛选</strong></td>
+              <td>从飞书知识库读取 100+ 条爆帖拆分表格，横向对比阅读量，选出最优蓝本；对资源型文章，联网搜索补充优质免费学习资源</td>
+              <td>飞书知识库 + WorkBuddy + 联网搜索</td>
+            </tr>
+            <tr>
+              <td><strong>8 步流水线执行</strong></td>
+              <td>按 Skill 定义的标准化流程，自动完成选帖 → 判类型 → 角色设定 → 开头三要素 → 正文 80/20 → 种草 7 层 → 钩子 → 标题封面，每次输出格式统一的四件套（正文 + 10 标题 + 10 封面 + 10 钩子）</td>
+              <td>WorkBuddy + 公众号贴图爆帖改写 Skill</td>
+            </tr>
+            <tr>
+              <td><strong>规则强制执行</strong></td>
+              <td>14 项自查清单每次自动逐条检查：字数区间、人设一致性、产品信号词、模板复刻、分点数量、种草数字、效果分点等——任何一项不通过，自动修正后重新检查</td>
+              <td>Skill 内嵌自查机制</td>
+            </tr>
+            <tr>
+              <td><strong>创意多样性保障</strong></td>
+              <td>强制每次使用全新场景/比喻/措辞，禁止复用示例句子或变体，确保连续两篇文章 7 层措辞相似度不超过 30%</td>
+              <td>Skill 内嵌反抄袭铁律 + 创意多样性规则</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 4</span>
+      <span class="step-title">我的判断是什么</span>
+    </div>
+    <div class="step-body">
+
+      <p>这个项目的特殊性在于——<strong>规则不是一开始就设计好的，是每写一篇，我读一遍，发现问题，才加上去。</strong></p>
+      <p>每一次迭代背后都有一个真实的判断瞬间：</p>
+
+      <p><strong>判断 1："人设必须固定"</strong></p>
+      <p>AI 写的文章每篇城市和孩子的性别都在变——这篇是北京儿子，那篇是上海女儿。我读完觉得不对：一个公众号的读者会关注"这个妈妈"的持续分享，人设跳来跳去，读者没法建立信任。<strong>我把人设锁死：武汉 + 三年级女儿 + 用"她"。</strong></p>
+
+      <p><strong>判断 2："种草不说数字，等于没说"</strong></p>
+      <p>AI 写效果经常用"效果很好""进步很大"这种空话。我读完完全不觉得有说服力——哪个家长看到"效果很好"会信？<strong>我要求种草的所有效果必须带具体数字。</strong>不是"阅读能力提升了"，是"从 70 分到 95 分"。数字本身就是证据。</p>
+
+      <p><strong>判断 3："模板复刻是最大的隐形问题"</strong></p>
+      <p>写到第 3 篇的时候，我发现种草段的收束句几乎都在用"种下去的东西跟一辈子"这个比喻的不同变体。读者可能不会注意到，但我发现了——这不只是在偷懒，这是在消解内容的独特感。<strong>我加了反抄袭铁律，禁止复用任何示例句子的原文或变体。</strong></p>
+
+      <p><strong>判断 4："分点太多，读者一定划走"</strong></p>
+      <p>有一篇正文列了 8 个方法，我自己读的时候直接往下滑——一个普通家长谁有耐心看完 8 条？<strong>我要求正文分点不超过 5 个。</strong>这个规则没有任何理论支撑，纯粹是我把自己当读者时的真实感受。</p>
+
+      <p><strong>判断 5："资源型文章不能用同一套规则"</strong></p>
+      <p>一篇纪录片推荐的文章改了 4 版都不对——按观点型文章的规则来写，读起来别扭。我意识到资源型文章的主体是清单，不是叙事。<strong>我专门拆出了一套资源型文章规则：资源数量不受分点限制、种草放资源后面。</strong></p>
+
+      <p>这些判断的共同点是：<strong>没有任何一条来自"我觉得理论上应该这样"。每一条都来自"我读了一遍，这里不舒服"。</strong></p>
+
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 5</span>
+      <span class="step-title">最终成果</span>
+    </div>
+    <div class="step-body">
+      <ul class="result-list">
+        <li><strong>核心 Skill：</strong><a href="公众号贴图爆帖改写-SKILL.md" target="_blank">《公众号贴图爆帖改写》SKILL.md</a> — 204 行，8 步标准化流程 + 三类文章规则 + 14 项自查清单，不绑定特定项目，核心流程可直接复用</li>
+        <li><strong>实际产出：</strong>10 天内 11 篇完整改写交付，覆盖教育观点、资源分享、学习规划三种类型</li>
+        <li><strong>规则演进记录：</strong>7 大板块规范文档 + 8 天工作日志，完整记录规则从无到有、从粗到细的全部迭代</li>
+      </ul>
+
+      <div class="insight-quote">
+        <strong>核心收获</strong><br><br>
+        从"靠经验记忆"变成了"靠系统"。14 项自查清单覆盖了所有可能出错的点——人设一致性、字数区间、产品信号词、模板复刻、分点数量、种草数字、效果分点……写完即自查，交付质量不再依赖当天的状态。<br><br>
+        更重要的是，<strong>规则的每一行都是"踩坑踩出来的"</strong>。数字铁律是因为发现空泛表达没人信，分点铁律是因为发现列太多读者划走，反抄袭铁律是因为发现自己无意中在复刻模板句式。这已经不只是"怎么写公众号贴"的 Skill，而是对<strong>公众号内容运营方法论</strong>的一次系统化沉淀。<br><br>
+        对个人作品集来说，这段经历展示了产品思维的完整闭环：发现痛点 → 抽象规则 → 迭代打磨 → 交付稳定产出。
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step">
+    <div class="step-head">
+      <span class="step-num">步骤 6</span>
+      <span class="step-title">如果再做一次</span>
+    </div>
+    <div class="step-body">
+
+      <p>如果重来，我会做两件事不一样。</p>
+
+      <p><strong>第一，从第一天就建立"问题→规则"映射表。</strong></p>
+      <p>实际上，第一篇改写就暴露了问题（内容被框架框死、人设不一致），但我等到第三篇才开始系统化地往 Skill 里加规则。如果从第一天就建立一个"问题日志"——每写完一篇立刻记录"哪里不对劲"——前几篇的质量会更稳定，不会出现"写完了才发现漏了规则"的返工。</p>
+
+      <p><strong>第二，但我也要承认：有些规则只能在反复踩坑之后才被足够深刻地认识到。</strong></p>
+      <p>反抄袭铁律、种草数字铁律——这些不是我第一天能想到的。它们是在写了 3 篇、4 篇之后，回头看才发现的模式。所以这个反思的核心不是"早点做"，而是<strong>"早点开始记录，但允许规则在实战中进化"</strong>。一个好的规范系统，不是在真空中设计出来的，是在真实工作里被逼出来的。</p>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- CLOSING -->
+<div class="transition">
+  <p>四段协作，一条成长线：学会使用 → 学会判断 → 学会工程化 → 学会系统化。<br>贯穿始终的，是在 AI 产出之上保持并锻炼属于自己的判断力。</p>
+</div>
+
+<footer class="footer">
+  <p>林晨 · AI 协作实践录 · 2026</p>
+</footer>
+
+
+
+</body>
+</html>
